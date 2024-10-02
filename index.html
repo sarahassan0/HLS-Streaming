@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLS Video Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            padding: 30px;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        video {
+            width: 80%;
+            max-width: 800px;
+            height: auto;
+            border: 2px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>A Simple Video Stream Using HLS Streaming<h1>
+        <br/>
+    <video id="video" controls></video>
+
+    <script>
+        const video = document.getElementById('video');
+        const videoSrc = 'http://localhost:3000/server?file=index.m3u8';
+
+        fetch(videoSrc)
+            .then(() => {
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoSrc;
+                } else if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(videoSrc);
+                    hls.attachMedia(video);
+                }
+            })
+            .catch(err => {
+                console.error(`Error fetching the video: ${err}`);
+            });
+    </script>
+
+    
+</body>
+</html>
