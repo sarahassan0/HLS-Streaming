@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, "hls")));
 
 
+//  Video Streaming Using HLS Stream
 const hlsPath = path.join(__dirname, "hls", "index.m3u8");
 
 fs.access(hlsPath, fs.constants.F_OK, (err) => {
@@ -17,7 +18,7 @@ fs.access(hlsPath, fs.constants.F_OK, (err) => {
 
     ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
-    ffmpeg("hls/test.mp4")
+    ffmpeg(path.join(__dirname, "hls/test.mp4"))
       .addOptions([
         "-profile:v baseline",
         "-level 3.0",
@@ -39,16 +40,14 @@ fs.access(hlsPath, fs.constants.F_OK, (err) => {
   }
 });
 
-
-app.get("/server", (req, res) => {
-
+app.get("/video", (req, res) => {
   let file = req.query.file;
   segment = req.url.split("/").pop();
 
   file.split(".").pop() === "m3u8"
     ? (file = file)
     : (file = req.url.split("/").pop());
-    const ext = file.split(".").pop();
+  const ext = file.split(".").pop();
   if (ext === "m3u8" || ext === "ts") {
     const filePath = path.join(__dirname, "hls", file);
 
@@ -64,6 +63,8 @@ app.get("/server", (req, res) => {
     res.status(400).send("Invalid file type");
   }
 });
+
+
 
 app.listen(3000, () => {
   console.log(`HLS server is running on http://localhost:${3000}`);
